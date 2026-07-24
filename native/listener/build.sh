@@ -13,4 +13,4 @@ fi
 
 echo
 echo "Build complete. Run with:"
-echo "  ./build/pi-listener -m $MODEL --wake <word>"
+echo "  ./build/pi-listener -m $MODEL --wake <word> --chime sound/alert.wav"

@@ -18,8 +18,8 @@ follow-up — no keyboard.
 ## Install
 
 ```bash
-pi install git:github.com/RaphaCastelloes/talk-pi
-cd ~/.pi/agent/git/github.com/RaphaCastelloes/talk-pi
+pi install https://github.com/Ifiht/pi-listener
+cd ~/.pi/agent/git/github.com/Ifiht/pi-listener
 ./build.sh
 cp .env.example .env   # then set PI_LISTENER_ACTIVATION_NAME
 ```
@@ -47,7 +47,7 @@ All settings live in `.env` (copy from `.env.example`):
 | --- | --- |
 | `PI_LISTENER_ACTIVATION_NAME` | **required** — the wake word |
 | `PI_LISTENER_BIN` | `./native/listener/build/pi-listener` |
-| `PI_LISTENER_CHIME` | `./sound/QuestLog.wav` |
+| `PI_LISTENER_CHIME` | `./sound/alert.wav` |
 | `PI_LISTENER_ARGS` | extra listener args, e.g. `-vth 0.7 -c 1 -fms 10000` |
 | `PI_LISTENER_TOOLS_DIR` | tools root override |
 | `PI_LISTENER_PIPER_BIN` | `<tools>/piper/piper` |
@@ -70,7 +70,7 @@ All settings live in `.env` (copy from `.env.example`):
 ```bash
 ./native/listener/build/pi-listener \
   -m whisper.cpp/models/ggml-base.en.bin \
-  --wake <word> --chime sound/QuestLog.wav
+  --wake <word> --chime sound/alert.wav
 ```
 
 Speak the wake word plus a command and watch for

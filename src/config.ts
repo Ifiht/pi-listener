@@ -44,7 +44,7 @@ function defaultListenerBinaryPath(): string {
 }
 
 function defaultChimePath(): string {
-  return path.join(packageRoot(), "sound", "QuestLog.wav");
+  return path.join(packageRoot(), "sound", "alert.wav");
 }
 
 function defaultPiperModelPath(env: NodeJS.ProcessEnv): string {
