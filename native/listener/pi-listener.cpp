@@ -21,6 +21,7 @@
 #include <atomic>
 #include <cctype>
 #include <chrono>
+#include <cmath>
 #include <cstdio>
 #include <iostream>
 #include <regex>
@@ -173,6 +174,21 @@ static bool extract_command(const std::string & txt, const std::string & wake, s
     }
 
     return false;
+}
+
+// RMS of the last `ms` of pcm after a high-pass filter.
+static float trailing_rms(const std::vector<float> & pcm, int ms, float freq_thold) {
+    const size_t n = std::min(pcm.size(), (size_t) (WHISPER_SAMPLE_RATE*ms/1000));
+    if (n == 0) {
+        return 0.0f;
+    }
+    std::vector<float> tail(pcm.end() - n, pcm.end());
+    high_pass_filter(tail, freq_thold, WHISPER_SAMPLE_RATE);
+    double sum = 0.0;
+    for (const float v : tail) {
+        sum += (double) v * v;
+    }
+    return (float) std::sqrt(sum / n);
 }
 
 // Drop whisper non-speech annotations like "[ Silence ]" or "(wind blowing)".
@@ -372,13 +388,20 @@ int main(int argc, char ** argv) {
             continue;
         }
 
-        if (awaiting && std::chrono::duration_cast<std::chrono::milliseconds>(
-                std::chrono::steady_clock::now() - t_wake).count() > params.follow_ms) {
-            awaiting = false;
-            fprintf(stderr, "%s: follow-up window expired\n", __func__);
-        }
-
         audio.get(2000, pcmf32_cur);
+
+        if (awaiting) {
+            // wozniak: absolute RMS floor to detect ongoing sound; naive vs mic
+            // gain differences. Adaptive noise floor is the upgrade path.
+            if (trailing_rms(pcmf32_cur, 1000, params.freq_thold) > 0.01f) {
+                // still hearing something: expire follow_ms after the sound ends
+                t_wake = std::chrono::steady_clock::now();
+            } else if (std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::steady_clock::now() - t_wake).count() > params.follow_ms) {
+                awaiting = false;
+                fprintf(stderr, "%s: follow-up window expired\n", __func__);
+            }
+        }
 
         if (::vad_simple(pcmf32_cur, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, params.print_energy)) {
             fprintf(stderr, "%s: speech detected, processing ...\n", __func__);

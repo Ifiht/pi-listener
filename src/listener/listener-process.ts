@@ -69,9 +69,14 @@ export function createListenerProcess(options: ListenerProcessOptions): Listener
       options.onEvent(event);
     });
 
-    readline.createInterface({ input: proc.stderr }).on("line", (line) => {
-      console.error(`[pi-listener] ${line}`);
-    });
+    if (process.env.PI_LISTENER_DEBUG) {
+      readline.createInterface({ input: proc.stderr }).on("line", (line) => {
+        console.error(`[pi-listener] ${line}`);
+      });
+    } else {
+      // Drain stderr so the child never blocks on a full pipe.
+      proc.stderr.resume();
+    }
 
     proc.on("error", (error) => {
       notify(`Listener failed to start: ${error.message}`, "error");
