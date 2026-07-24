@@ -23,6 +23,22 @@ async function run(): Promise<void> {
   assert.equal(resolved.binaryPath, bin);
   assert.equal(resolved.modelPath, model);
 
+  // Custom model + bundled binary: no default-voice downloads required.
+  const toolsDir = path.join(dir, "tools");
+  const bundledBin = path.join(toolsDir, "piper", "piper");
+  fs.mkdirSync(path.dirname(bundledBin), { recursive: true });
+  fs.writeFileSync(bundledBin, "", { mode: 0o755 });
+  const bundled = await ensurePiperTool({
+    env: {
+      HOME: dir,
+      USERPROFILE: dir,
+      PI_LISTENER_PIPER_MODEL_PATH: model,
+      PI_LISTENER_TOOLS_DIR: toolsDir,
+    } as NodeJS.ProcessEnv,
+  });
+  assert.equal(bundled.binaryPath, bundledBin);
+  assert.equal(bundled.modelPath, model);
+
   // A dangling PI_LISTENER_PIPER_BIN must not short-circuit (falls through to normal checks).
   await assert.rejects(
     ensurePiperTool({

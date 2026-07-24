@@ -169,9 +169,10 @@ export async function ensurePiperTool(options: ToolBootstrapOptions = {}): Promi
   const explicitBinary = env.PI_LISTENER_PIPER_BIN?.trim();
   const externalBinary = explicitBinary && exists(explicitBinary) ? explicitBinary : undefined;
   const explicitModel = env.PI_LISTENER_PIPER_MODEL_PATH?.trim();
+  const externalModel = explicitModel && exists(explicitModel) ? explicitModel : undefined;
 
-  if (externalBinary && explicitModel && exists(explicitModel)) {
-    return { binaryPath: externalBinary, modelPath: explicitModel };
+  if (externalBinary && externalModel) {
+    return { binaryPath: externalBinary, modelPath: externalModel };
   }
 
   let binary: string;
@@ -191,19 +192,24 @@ export async function ensurePiperTool(options: ToolBootstrapOptions = {}): Promi
     throw new Error(`[pi-listener] Unable to resolve Piper extension path: ${details}`);
   }
 
-  if (!externalBinary && (!exists(binary) || !exists(model) || !exists(modelJson))) {
+  if (!externalBinary && !exists(binary)) {
     if (process.platform !== "win32") {
       throw new Error("Piper missing. Put it in the extension folder, or set PI_LISTENER_PIPER_BIN / PI_LISTENER_TOOLS_DIR.");
     }
 
     notify(options, "Pi-listener: Downloading 📥 Piper", "info");
     await bootstrapWindowsZip(PIPER_WINDOWS_ZIP, path.join(toolRoot(options), "piper"));
-    if (!exists(model) || !exists(modelJson)) {
-      notify(options, "Pi-listener: Downloading 📥 Piper voice model", "info");
-      await ensureDir(path.dirname(model));
-      await downloadFile(PIPER_VOICE_MODEL, model);
-      await downloadFile(PIPER_VOICE_MODEL_JSON, modelJson);
-    }
+  }
+
+  if (externalModel) {
+    return { binaryPath: externalBinary ?? binary, modelPath: externalModel };
+  }
+
+  if (!exists(model) || !exists(modelJson)) {
+    notify(options, "Pi-listener: Downloading 📥 Piper voice model", "info");
+    await ensureDir(path.dirname(model));
+    await downloadFile(PIPER_VOICE_MODEL, model);
+    await downloadFile(PIPER_VOICE_MODEL_JSON, modelJson);
   }
 
   if (!exists(ryan) || !exists(ryanJson)) {
