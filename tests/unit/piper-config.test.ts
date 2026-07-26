@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { resolvePiperConfig } from "../../src/tts/piper-config.ts";
 import { defaultTemporaryWavRoot } from "../../src/tts/temp-wav.ts";
+import { piperBinarySegments } from "../../src/tools.ts";
 import { createToolPathFixture } from "./tools-test-utils.ts";
 
 function run(): void {
@@ -27,7 +28,7 @@ function run(): void {
     } as NodeJS.ProcessEnv,
   });
 
-  assert.equal(defaults.binaryPath, path.join(process.cwd(), "tools", "piper", process.platform === "win32" ? "piper.exe" : "piper"));
+  assert.equal(defaults.binaryPath, path.join(process.cwd(), "tools", ...piperBinarySegments()));
   assert.equal(defaults.modelPath, "/opt/piper/voices/voice.onnx");
   assert.equal(defaults.outputDir, defaultTemporaryWavRoot());
   assert.equal(defaults.outputDir, path.join(os.homedir(), ".pi", "agent", "extensions", "pi-listener", "tts"));
@@ -36,7 +37,7 @@ function run(): void {
   const fallback = resolvePiperConfig({ env: { ...localFixture.env, PI_LISTENER_TOOLS_DIR: toolsDir } as NodeJS.ProcessEnv });
   assert.equal(
     fallback.binaryPath,
-    path.join(toolsDir, "piper", process.platform === "win32" ? "piper.exe" : "piper"),
+    path.join(toolsDir, ...piperBinarySegments()),
   );
   assert.equal(
     fallback.modelPath,
@@ -47,7 +48,7 @@ function run(): void {
   const userDefaults = resolvePiperConfig({ env: fixture.env });
   assert.equal(
     userDefaults.binaryPath,
-    path.join(fixture.homeToolsDir, "piper", process.platform === "win32" ? "piper.exe" : "piper"),
+    path.join(fixture.homeToolsDir, ...piperBinarySegments()),
   );
   assert.equal(
     userDefaults.modelPath,

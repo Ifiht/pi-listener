@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { executableName } from "../../src/tools.ts";
+import { executableName, piperBinarySegments } from "../../src/tools.ts";
 
 export type ToolPathFixture = {
   root: string;
@@ -62,10 +62,12 @@ export function createToolPathFixture(options: ToolPathFixtureOptions = {}): Too
 }
 
 export function seedToolMarkers(toolsDir: string): void {
-  fs.mkdirSync(path.join(toolsDir, "piper"), { recursive: true });
+  const piperBin = path.join(toolsDir, ...piperBinarySegments());
+  fs.mkdirSync(path.dirname(piperBin), { recursive: true });
+  fs.mkdirSync(path.join(toolsDir, "piper", "models"), { recursive: true });
   fs.mkdirSync(path.join(toolsDir, "sox"), { recursive: true });
   fs.mkdirSync(path.join(toolsDir, "whisper", "models"), { recursive: true });
-  fs.writeFileSync(path.join(toolsDir, "piper", executableName("piper")), "");
+  fs.writeFileSync(piperBin, "");
   fs.writeFileSync(path.join(toolsDir, "sox", executableName("sox")), "");
   fs.writeFileSync(path.join(toolsDir, "whisper", "models", "ggml-base.bin"), "");
 }

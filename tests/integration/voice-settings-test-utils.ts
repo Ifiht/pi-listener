@@ -1,17 +1,19 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { executableName } from "../../src/tools.ts";
+import { executableName, piperBinarySegments } from "../../src/tools.ts";
 
 export function createTalkPiVoiceFixture(prefix: string) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
   const toolsDir = path.join(root, ".pi", "agent", "extensions", "talk-pi");
   const piperDir = path.join(toolsDir, "piper");
+  const piperBin = path.join(toolsDir, ...piperBinarySegments());
   const modelsDir = path.join(piperDir, "models");
   const prefsPath = path.join(root, "prefs.json");
 
   fs.mkdirSync(modelsDir, { recursive: true });
-  fs.writeFileSync(path.join(piperDir, executableName("piper")), "piper");
+  fs.mkdirSync(path.dirname(piperBin), { recursive: true });
+  fs.writeFileSync(piperBin, "piper");
   fs.writeFileSync(path.join(modelsDir, "pt_BR-faber-medium.onnx"), "pt");
   fs.writeFileSync(path.join(modelsDir, "pt_BR-faber-medium.onnx.json"), "{}");
   fs.writeFileSync(path.join(modelsDir, "en_US-lessac-medium.onnx"), "english");

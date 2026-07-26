@@ -3,6 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { ensurePiperTool } from "../../src/tools-bootstrap.ts";
+import { piperBinarySegments } from "../../src/tools.ts";
 
 async function run(): Promise<void> {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-listener-ext-piper-"));
@@ -25,7 +26,7 @@ async function run(): Promise<void> {
 
   // Custom model + bundled binary: no default-voice downloads required.
   const toolsDir = path.join(dir, "tools");
-  const bundledBin = path.join(toolsDir, "piper", "piper");
+  const bundledBin = path.join(toolsDir, ...piperBinarySegments());
   fs.mkdirSync(path.dirname(bundledBin), { recursive: true });
   fs.writeFileSync(bundledBin, "", { mode: 0o755 });
   const bundled = await ensurePiperTool({
