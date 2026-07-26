@@ -4,7 +4,7 @@ import https from "node:https";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { executableName, resolveToolPath } from "./tools.ts";
+import { piperBinarySegments, resolveToolPath } from "./tools.ts";
 
 export type ToolNotifyLevel = "info" | "warning" | "error";
 export type ToolNotify = (message: string, level?: ToolNotifyLevel) => void;
@@ -31,7 +31,7 @@ function toolRoot(options: ToolBootstrapOptions): string {
 }
 
 function piperBinaryPath(options: ToolBootstrapOptions): string {
-  return path.join(toolRoot(options), "piper", executableName("piper"));
+  return path.join(toolRoot(options), ...piperBinarySegments());
 }
 
 function piperVoiceModelPath(options: ToolBootstrapOptions): string {

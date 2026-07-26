@@ -78,3 +78,10 @@ export function resolveToolPath(segments: string[], options: ToolPathOptions = {
 export function executableName(baseName: string): string {
   return process.platform === "win32" ? `${baseName}.exe` : baseName;
 }
+
+// Piper install layout relative to the tools root: build.sh pip-installs the
+// piper-tts wheel into a venv on Linux/macOS; Windows still uses the old
+// prebuilt zip (piper/piper.exe).
+export function piperBinarySegments(): string[] {
+  return process.platform === "win32" ? ["piper", "piper.exe"] : ["piper-venv", "bin", "piper"];
+}

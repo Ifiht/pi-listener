@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# One-shot setup: whisper.cpp submodule, node deps, native listener, piper binary.
-# Prerequisites: git, curl, cmake, SDL2 (apt: build-essential cmake libsdl2-dev / brew: cmake sdl2)
+# One-shot setup: whisper.cpp submodule, node deps, native listener, piper TTS.
+# Prerequisites: git, curl, cmake, SDL2, python3 (apt: build-essential cmake libsdl2-dev python3-venv / brew: cmake sdl2)
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -14,26 +14,21 @@ git submodule update --init whisper.cpp
 npm install
 native/listener/build.sh
 
-# Piper binary: the extension only auto-downloads it on Windows, so fetch the
-# prebuilt release here for Linux/macOS if it is missing.
+# Piper TTS: install the official piper-tts wheel (OHF-Voice/piper1-gpl) into a
+# venv under the tools root. Wheels bundle espeak-ng and cover all platforms;
+# the extension auto-downloads the old prebuilt zip on Windows instead.
 if [ -d "$HOME/.pi" ]; then
     TOOLS_ROOT="$HOME/.pi/agent/extensions/pi-listener"
 else
     TOOLS_ROOT="./tools"
 fi
-PIPER_BIN="$TOOLS_ROOT/piper/piper"
+PIPER_BIN="$TOOLS_ROOT/piper-venv/bin/piper"
 if [ ! -x "$PIPER_BIN" ]; then
-    case "$(uname -s)-$(uname -m)" in
-        Linux-x86_64)   ASSET=piper_linux_x86_64.tar.gz ;;
-        Linux-aarch64)  ASSET=piper_linux_aarch64.tar.gz ;;
-        Linux-armv7l)   ASSET=piper_linux_armv7l.tar.gz ;;
-        Darwin-x86_64)  ASSET=piper_macos_x64.tar.gz ;;
-        Darwin-arm64)   ASSET=piper_macos_aarch64.tar.gz ;;
-        *) echo "No prebuilt piper for $(uname -s)-$(uname -m); set PI_LISTENER_PIPER_BIN in .env" >&2; exit 1 ;;
-    esac
-    echo "Downloading piper ($ASSET) into $TOOLS_ROOT ..."
+    command -v python3 >/dev/null 2>&1 || { echo "python3 is required to install piper-tts" >&2; exit 1; }
+    echo "Installing piper-tts into $TOOLS_ROOT/piper-venv ..."
     mkdir -p "$TOOLS_ROOT"
-    curl -fL "https://github.com/rhasspy/piper/releases/download/2023.11.14-2/$ASSET" | tar -xz -C "$TOOLS_ROOT"
+    python3 -m venv "$TOOLS_ROOT/piper-venv"
+    "$TOOLS_ROOT/piper-venv/bin/pip" install --quiet --upgrade pip piper-tts
 fi
 
 echo

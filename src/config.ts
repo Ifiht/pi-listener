@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defaultTemporaryWavRoot } from "./tts/temp-wav.ts";
-import { executableName, resolveToolPath } from "./tools.ts";
+import { executableName, piperBinarySegments, resolveToolPath } from "./tools.ts";
 
 export type PiListenerListenerConfig = {
   binaryPath: string;
@@ -68,7 +68,7 @@ export function loadPiListenerConfig(env: NodeJS.ProcessEnv = process.env): PiLi
       extraArgs: parseExtraArgs(env.PI_LISTENER_ARGS),
     },
     piper: {
-      binaryPath: normalizedPath(env.PI_LISTENER_PIPER_BIN) ?? resolveToolPath(["piper", executableName("piper")], { env }),
+      binaryPath: normalizedPath(env.PI_LISTENER_PIPER_BIN) ?? resolveToolPath(piperBinarySegments(), { env }),
       modelPath: normalizedPath(env.PI_LISTENER_PIPER_MODEL_PATH) ?? defaultPiperModelPath(env),
       outputDir: normalizedPath(env.PI_LISTENER_TTS_OUTPUT_DIR) ?? defaultTemporaryWavRoot(),
     },
