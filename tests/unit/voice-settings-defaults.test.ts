@@ -7,7 +7,7 @@ async function run() {
   const fixture = createVoiceSettingsFixture("talk-pi-voice-defaults-");
 
   const loaded = await loadPiperVoicePreference({ env: fixture.env });
-  assert.equal(loaded.selectedOutputKind, "default");
+  assert.equal(loaded.selectedOutputKind, "english");
   assert.equal(loaded.muted, false);
   assert.equal(loaded.selectedModelId, undefined);
 

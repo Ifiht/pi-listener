@@ -44,7 +44,7 @@ export type PiperRuntimeConfig = {
 };
 
 const DEFAULT_PREFERENCE: PiperVoicePreference = {
-  selectedOutputKind: "default",
+  selectedOutputKind: "english",
   muted: false,
   updatedAt: new Date(0).toISOString(),
 };

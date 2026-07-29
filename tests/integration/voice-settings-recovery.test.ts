@@ -9,7 +9,7 @@ async function run() {
   fs.writeFileSync(fixture.prefsPath, "{ this is not valid json");
 
   const startup = await loadVoiceSettingsStartupState({ env: fixture.env });
-  assert.equal(startup.selection.outputLabel, "Portuguese - Faber");
+  assert.equal(startup.selection.outputLabel, "English - Lessac");
   assert.equal(startup.muteState.isMuted(), false);
 
   const titles: string[] = [];
@@ -39,7 +39,7 @@ async function run() {
   });
 
   assert.ok(titles[0]?.includes("Unmuted"));
-  assert.ok(notifications.some((message) => message.includes("Voice Language: Portuguese - Faber")));
+  assert.ok(notifications.some((message) => message.includes("Voice Language: English - Lessac")));
 }
 
 run().catch((error) => {

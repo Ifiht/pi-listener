@@ -8,7 +8,7 @@ async function run() {
   fs.writeFileSync(fixture.prefsPath, "{ not valid json");
 
   const loaded = await loadPiperVoicePreference({ env: fixture.env });
-  assert.equal(loaded.selectedOutputKind, "default");
+  assert.equal(loaded.selectedOutputKind, "english");
   assert.equal(loaded.muted, false);
   assert.equal(loaded.selectedModelId, undefined);
 

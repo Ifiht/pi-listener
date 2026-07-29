@@ -9,7 +9,7 @@ async function run() {
   fs.rmSync(fixture.prefsPath, { force: true });
 
   const startup = await loadVoiceSettingsStartupState({ env: fixture.env });
-  assert.equal(startup.selection.outputLabel, "Portuguese - Faber");
+  assert.equal(startup.selection.outputLabel, "English - Lessac");
   assert.equal(startup.muteState.isMuted(), false);
 
   const titles: string[] = [];
@@ -42,7 +42,7 @@ async function run() {
 
   assert.ok(titles[0]?.includes("Unmuted"));
   assert.deepEqual(optionSets[0], ["Status", "Mute", "Close"]);
-  assert.ok(notifications.some((message) => message.includes("Voice Language: Portuguese - Faber")));
+  assert.ok(notifications.some((message) => message.includes("Voice Language: English - Lessac")));
 }
 
 run().catch((error) => {
