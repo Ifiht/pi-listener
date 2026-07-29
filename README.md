@@ -62,6 +62,19 @@ keep your `.env` there.
 | `PI_LISTENER_WHISPER_MODEL_PATH` | `<tools>/whisper/models/ggml-base.en.bin` |
 | `PI_LISTENER_WHISPER_MODEL_URL` | base.en on Hugging Face |
 
+## Custom Voices
+
+Download voice models to `~/.pi/agent/extensions/pi-listener/tools/piper/models/` and set `PI_LISTENER_PIPER_MODEL_PATH` to the path of the model file, e.g.
+```
+curl -L -o en_US-ryan-high.onnx \
+  https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/high/en_US-ryan-high.onnx
+curl -L -o en_US-ryan-high.onnx.json \
+  https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/high/en_US-ryan-high.onnx.json
+```
+
+Match your agent's personality with their voice via:  
+`~/.pi/agent/SYSTEM.md` or `~/.pi/agent/APPEND_SYSTEM.md`
+
 ## Usage
 
 1. Start `pi`.
