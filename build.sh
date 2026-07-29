@@ -10,18 +10,24 @@ if ! command -v npm >/dev/null 2>&1; then
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm use 24
 fi
 
-git submodule update --init whisper.cpp
-npm install
-native/listener/build.sh
-
-# Piper TTS: install the official piper-tts wheel (OHF-Voice/piper1-gpl) into a
-# venv under the tools root. Wheels bundle espeak-ng and cover all platforms;
-# the extension auto-downloads the old prebuilt zip on Windows instead.
 if [ -d "$HOME/.pi" ]; then
     TOOLS_ROOT="$HOME/.pi/agent/extensions/pi-listener"
 else
     TOOLS_ROOT="./tools"
 fi
+
+git submodule update --init whisper.cpp
+npm install
+native/listener/build.sh
+
+# Install the listener binary into the tools root: the git checkout is wiped
+# by `pi update --extensions`, the tools root persists.
+mkdir -p "$TOOLS_ROOT/listener"
+install -m 755 native/listener/build/pi-listener "$TOOLS_ROOT/listener/pi-listener"
+
+# Piper TTS: install the official piper-tts wheel (OHF-Voice/piper1-gpl) into a
+# venv under the tools root. Wheels bundle espeak-ng and cover all platforms;
+# the extension auto-downloads the old prebuilt zip on Windows instead.
 PIPER_BIN="$TOOLS_ROOT/piper-venv/bin/piper"
 if [ ! -x "$PIPER_BIN" ]; then
     command -v python3 >/dev/null 2>&1 || { echo "python3 is required to install piper-tts" >&2; exit 1; }
@@ -33,6 +39,6 @@ fi
 
 echo
 echo "Build complete."
-echo "  Listener binary: native/listener/build/pi-listener"
+echo "  Listener binary: $TOOLS_ROOT/listener/pi-listener"
 echo "  Piper binary:    $PIPER_BIN"
 echo "Next: cp .env.example ~/.pi/agent/extensions/pi-listener/.env, set PI_LISTENER_ACTIVATION_NAME, then run 'pi' and /listen"

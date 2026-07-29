@@ -39,8 +39,8 @@ function packageRoot(): string {
   return path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 }
 
-function defaultListenerBinaryPath(): string {
-  return path.join(packageRoot(), "native", "listener", "build", executableName("pi-listener"));
+function defaultListenerBinaryPath(env: NodeJS.ProcessEnv): string {
+  return resolveToolPath(["listener", executableName("pi-listener")], { env });
 }
 
 function defaultChimePath(): string {
@@ -62,7 +62,7 @@ function parseExtraArgs(value: string | undefined): string[] {
 export function loadPiListenerConfig(env: NodeJS.ProcessEnv = process.env): PiListenerConfig {
   return {
     listener: {
-      binaryPath: normalizedPath(env.PI_LISTENER_BIN) ?? defaultListenerBinaryPath(),
+      binaryPath: normalizedPath(env.PI_LISTENER_BIN) ?? defaultListenerBinaryPath(env),
       wake: normalizedPath(env.PI_LISTENER_ACTIVATION_NAME),
       chimePath: normalizedPath(env.PI_LISTENER_CHIME) ?? defaultChimePath(),
       extraArgs: parseExtraArgs(env.PI_LISTENER_ARGS),

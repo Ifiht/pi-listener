@@ -38,6 +38,9 @@ prebuilt Piper binary for your platform.
 
 Piper voice models (Ryan, Lessac) and the Whisper model are auto-downloaded on
 first use into `~/.pi/agent/extensions/pi-listener` (or `./tools` without `~/.pi`).
+`build.sh` installs the native listener binary there too, so it survives
+`pi update --extensions`. Re-run `./build.sh` after an update only if the
+native sources changed.
 
 ## Configuration
 
@@ -49,7 +52,7 @@ keep your `.env` there.
 | Variable | Default / Note |
 | --- | --- |
 | `PI_LISTENER_ACTIVATION_NAME` | **required** — the wake word |
-| `PI_LISTENER_BIN` | `./native/listener/build/pi-listener` |
+| `PI_LISTENER_BIN` | `<tools>/listener/pi-listener` |
 | `PI_LISTENER_CHIME` | `./sound/alert.wav` |
 | `PI_LISTENER_ARGS` | extra listener args, e.g. `-vth 0.7 -c 1 -fms 10000` |
 | `PI_LISTENER_TOOLS_DIR` | tools root override |

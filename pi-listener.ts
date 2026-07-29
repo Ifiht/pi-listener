@@ -82,6 +82,10 @@ export default function (pi: ExtensionAPI) {
 
   const handleCommand = (text: string) => {
     if (loopState === "stopped") return;
+    if (/^listen[\s.,!?]*$/i.test(text.trim())) {
+      void stopLoop().then(() => notify("Listener stopped", "info"));
+      return;
+    }
     loopState = "processing";
     listener?.pause();
     syncStatus();
