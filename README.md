@@ -21,7 +21,7 @@ follow-up — no keyboard.
 pi install https://github.com/Ifiht/pi-listener
 cd ~/.pi/agent/git/github.com/Ifiht/pi-listener
 ./build.sh
-cp .env.example .env   # then set PI_LISTENER_ACTIVATION_NAME
+cp .env.example ~/.pi/agent/extensions/pi-listener/.env   # then set PI_LISTENER_ACTIVATION_NAME
 ```
 
 `build.sh` initializes the whisper.cpp submodule, installs node deps, builds
@@ -41,7 +41,10 @@ first use into `~/.pi/agent/extensions/pi-listener` (or `./tools` without `~/.pi
 
 ## Configuration
 
-All settings live in `.env` (copy from `.env.example`):
+All settings live in `~/.pi/agent/extensions/pi-listener/.env` (copy from
+`.env.example`). This directory persists across `pi update --extensions`; the
+git checkout under `~/.pi/agent/git/` is overwritten on every update, so don't
+keep your `.env` there.
 
 | Variable | Default / Note |
 | --- | --- |

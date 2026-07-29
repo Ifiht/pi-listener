@@ -1,3 +1,4 @@
+import os from "node:os";
 import path from "node:path";
 import { createMuteState } from "./src/ui/mute-state.ts";
 import { openUnifiedTalkMenu } from "./src/ui/unified-talk-menu.ts";
@@ -11,7 +12,7 @@ import { loadVoiceSettingsStartupState, persistVoiceSettingsMute } from "./src/v
 import { ensurePiperTool } from "./src/tools-bootstrap.ts";
 
 try {
-  process.loadEnvFile(path.join(path.dirname(new URL(import.meta.url).pathname), ".env"));
+  process.loadEnvFile(path.join(os.homedir(), ".pi", "agent", "extensions", "pi-listener", ".env"));
 } catch {
   // no .env file; rely on the process environment
 }

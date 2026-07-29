@@ -35,4 +35,4 @@ echo
 echo "Build complete."
 echo "  Listener binary: native/listener/build/pi-listener"
 echo "  Piper binary:    $PIPER_BIN"
-echo "Next: cp .env.example .env, set PI_LISTENER_ACTIVATION_NAME, then run 'pi' and /listen"
+echo "Next: cp .env.example ~/.pi/agent/extensions/pi-listener/.env, set PI_LISTENER_ACTIVATION_NAME, then run 'pi' and /listen"
