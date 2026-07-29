@@ -185,7 +185,9 @@ export default function (pi: ExtensionAPI) {
     if (loopState === "stopped") return;
     const text = extractAssistantReplyText(event?.message);
     if (text && !muteState.isMuted()) {
+      loopState = "processing";
       listener?.pause();
+      syncStatus();
       void playbackQueue.enqueue(text);
     } else if (loopState === "processing" && playbackQueue.pendingCount() === 0) {
       resumeListening();
